@@ -1,0 +1,36 @@
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "Example Feed",
+  "home_page_url": "https://example.com/",
+  "feed_url": "https://example.com/feed",
+  "description": "An example feed for cross-format guards",
+  "language": "en-us",
+  "icon": "https://example.com/cover.png",
+  "author": {"name": "Jane Doe"},
+  "items": [
+    {
+      "id": "urn:example:1",
+      "url": "https://example.com/first",
+      "title": "First Post",
+      "summary": "First summary",
+      "content_html": "<p>First content</p>",
+      "date_published": "2006-01-02T15:04:05Z",
+      "date_modified": "2006-01-03T11:00:00Z",
+      "author": {"name": "John Item"},
+      "tags": ["Tech"],
+      "attachments": [
+        {"url": "https://example.com/audio1.mp3", "mime_type": "audio/mpeg", "size_in_bytes": 111},
+        {"url": "/relative/video.mp4", "mime_type": "video/mp4", "size_in_bytes": 222}
+      ]
+    },
+    {
+      "id": "urn:example:2",
+      "url": "https://example.com/second",
+      "title": "Second Post",
+      "summary": "Second summary",
+      "content_html": "<p>Second content</p>",
+      "date_published": "2006-01-03T10:00:00Z",
+      "date_modified": "2006-01-03T10:30:00Z"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+<!--
+Description: multiple link rel=self in Atom: the FIRST one wins FeedLink
+(deliberately different from the RSS translator, where the last wins)
+-->
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <link rel="self" href="http://example.org/self-first"/>
+  <link rel="self" href="http://example.org/self-last"/>
+</feed>

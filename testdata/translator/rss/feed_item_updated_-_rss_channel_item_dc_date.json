@@ -1,0 +1,29 @@
+{
+    "items": [
+        {
+            "updated": "2006-01-02T15:04:05Z",
+            "updatedParsed": "2006-01-02T15:04:05Z",
+            "published": "2006-01-02T15:04:05Z",
+            "publishedParsed": "2006-01-02T15:04:05Z",
+            "dcExt": {
+                "date": [
+                    "2006-01-02T15:04:05Z"
+                ]
+            },
+            "extensions": {
+                "dc": {
+                    "date": [
+                        {
+                            "name": "date",
+                            "value": "2006-01-02T15:04:05Z",
+                            "attrs": {},
+                            "children": {}
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "feedType": "rss",
+    "feedVersion": "2.0"
+}

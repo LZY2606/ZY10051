@@ -1,0 +1,13 @@
+{
+    "items": [
+        {
+            "updated": "2006-01-02T15:04:05Z",
+            "updatedParsed": "2006-01-02T15:04:05Z",
+            "published": "2006-01-02T15:04:05Z",
+            "publishedParsed": "2006-01-02T15:04:05Z",
+            "guid": "urn:example:1"
+        }
+    ],
+    "feedType": "atom",
+    "feedVersion": "1.0"
+}

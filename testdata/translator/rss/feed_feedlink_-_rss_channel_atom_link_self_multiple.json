@@ -1,0 +1,34 @@
+{
+    "feedLink": "http://example.org/self-last",
+    "links": [
+        "http://example.org/self-first",
+        "http://example.org/self-last"
+    ],
+    "extensions": {
+        "atom": {
+            "link": [
+                {
+                    "name": "link",
+                    "value": "",
+                    "attrs": {
+                        "href": "http://example.org/self-first",
+                        "rel": "self"
+                    },
+                    "children": {}
+                },
+                {
+                    "name": "link",
+                    "value": "",
+                    "attrs": {
+                        "href": "http://example.org/self-last",
+                        "rel": "self"
+                    },
+                    "children": {}
+                }
+            ]
+        }
+    },
+    "items": [],
+    "feedType": "rss",
+    "feedVersion": "2.0"
+}

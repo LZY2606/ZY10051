@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+     xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Example Feed</title>
+    <link>https://example.com/</link>
+    <atom:link rel="self" href="https://example.com/feed"/>
+    <description>An example feed for cross-format guards</description>
+    <language>en-us</language>
+    <lastBuildDate>2006-01-03T11:00:00Z</lastBuildDate>
+    <managingEditor>Jane Doe</managingEditor>
+    <image>
+      <url>https://example.com/cover.png</url>
+    </image>
+    <item>
+      <title>First Post</title>
+      <link>https://example.com/first</link>
+      <guid>urn:example:1</guid>
+      <description>First summary</description>
+      <content:encoded><![CDATA[<p>First content</p>]]></content:encoded>
+      <author>John Item</author>
+      <category>Tech</category>
+      <pubDate>2006-01-02T15:04:05Z</pubDate>
+      <dc:date>2006-01-03T11:00:00Z</dc:date>
+      <enclosure url="https://example.com/audio1.mp3" type="audio/mpeg" length="111"/>
+      <enclosure url="/relative/video.mp4" type="video/mp4" length="222"/>
+    </item>
+    <item>
+      <title>Second Post</title>
+      <link>https://example.com/second</link>
+      <guid>urn:example:2</guid>
+      <description>Second summary</description>
+      <content:encoded><![CDATA[<p>Second content</p>]]></content:encoded>
+      <pubDate>2006-01-03T10:00:00Z</pubDate>
+      <dc:date>2006-01-03T10:30:00Z</dc:date>
+    </item>
+  </channel>
+</rss>

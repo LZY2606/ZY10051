@@ -1,0 +1,16 @@
+{
+  "version": "https://jsonfeed.org/version/1",
+  "title": "t",
+  "items": [
+    {
+      "id": "a",
+      "date_published": "2006-01-02T15:04:05Z",
+      "date_modified": "2006-01-03T15:04:05Z"
+    },
+    {
+      "id": "b",
+      "date_published": "2006-01-01T15:04:05Z",
+      "date_modified": "2006-01-01T15:04:05Z"
+    }
+  ]
+}

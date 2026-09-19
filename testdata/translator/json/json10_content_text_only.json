@@ -1,0 +1,10 @@
+{
+  "version": "https://jsonfeed.org/version/1",
+  "title": "t",
+  "items": [
+    {
+      "id": "a",
+      "content_text": "plain text content"
+    }
+  ]
+}

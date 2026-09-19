@@ -1,0 +1,11 @@
+{
+    "title": "t",
+    "items": [
+        {
+            "content": "plain text content",
+            "guid": "a"
+        }
+    ],
+    "feedType": "json",
+    "feedVersion": "https://jsonfeed.org/version/1"
+}

@@ -1,0 +1,10 @@
+<!--
+Description: item updated falls back to dc:date (RSS-specific rule)
+-->
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <item>
+      <dc:date>2006-01-02T15:04:05Z</dc:date>
+    </item>
+  </channel>
+</rss>

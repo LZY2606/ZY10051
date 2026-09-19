@@ -1,0 +1,10 @@
+{
+    "feedLink": "http://example.org/self-first",
+    "links": [
+        "http://example.org/self-first",
+        "http://example.org/self-last"
+    ],
+    "items": [],
+    "feedType": "atom",
+    "feedVersion": "1.0"
+}

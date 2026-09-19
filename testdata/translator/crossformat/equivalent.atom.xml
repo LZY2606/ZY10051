@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us">
+  <title>Example Feed</title>
+  <subtitle>An example feed for cross-format guards</subtitle>
+  <link rel="alternate" href="https://example.com/"/>
+  <link rel="self" href="https://example.com/feed"/>
+  <updated>2006-01-03T11:00:00Z</updated>
+  <author><name>Jane Doe</name></author>
+  <logo>https://example.com/cover.png</logo>
+  <entry>
+    <title>First Post</title>
+    <link rel="alternate" href="https://example.com/first"/>
+    <id>urn:example:1</id>
+    <summary>First summary</summary>
+    <content type="html">&lt;p&gt;First content&lt;/p&gt;</content>
+    <author><name>John Item</name></author>
+    <category term="Tech"/>
+    <published>2006-01-02T15:04:05Z</published>
+    <updated>2006-01-03T11:00:00Z</updated>
+    <link rel="enclosure" href="https://example.com/audio1.mp3" type="audio/mpeg" length="111"/>
+    <link rel="enclosure" href="/relative/video.mp4" type="video/mp4" length="222"/>
+  </entry>
+  <entry>
+    <title>Second Post</title>
+    <link rel="alternate" href="https://example.com/second"/>
+    <id>urn:example:2</id>
+    <summary>Second summary</summary>
+    <content type="html">&lt;p&gt;Second content&lt;/p&gt;</content>
+    <published>2006-01-03T10:00:00Z</published>
+    <updated>2006-01-03T10:30:00Z</updated>
+  </entry>
+</feed>

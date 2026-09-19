@@ -1,0 +1,10 @@
+<!--
+Description: entry without published: Published/PublishedParsed fall back to
+updated (Atom-specific rule; RSS and JSON do not do this)
+-->
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <entry>
+    <id>urn:example:1</id>
+    <updated>2006-01-02T15:04:05Z</updated>
+  </entry>
+</feed>

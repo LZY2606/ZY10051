@@ -1,0 +1,25 @@
+{
+    "title": "t",
+    "updated": "2006-01-03T15:04:05Z",
+    "updatedParsed": "2006-01-03T15:04:05Z",
+    "published": "2006-01-02T15:04:05Z",
+    "publishedParsed": "2006-01-02T15:04:05Z",
+    "items": [
+        {
+            "updated": "2006-01-03T15:04:05Z",
+            "updatedParsed": "2006-01-03T15:04:05Z",
+            "published": "2006-01-02T15:04:05Z",
+            "publishedParsed": "2006-01-02T15:04:05Z",
+            "guid": "a"
+        },
+        {
+            "updated": "2006-01-01T15:04:05Z",
+            "updatedParsed": "2006-01-01T15:04:05Z",
+            "published": "2006-01-01T15:04:05Z",
+            "publishedParsed": "2006-01-01T15:04:05Z",
+            "guid": "b"
+        }
+    ],
+    "feedType": "json",
+    "feedVersion": "https://jsonfeed.org/version/1"
+}
