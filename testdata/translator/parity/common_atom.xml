@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+  <title>Parity Feed</title>
+  <subtitle>A cross-format parity feed</subtitle>
+  <link rel="alternate" href="https://example.org/"/>
+  <link rel="self" href="https://example.org/feed"/>
+  <updated>2006-01-03T15:04:05Z</updated>
+  <author><name>Jane Doe</name></author>
+  <logo>https://example.org/logo.png</logo>
+  <entry>
+    <title>Item One</title>
+    <link rel="alternate" href="https://example.org/1"/>
+    <id>urn:parity:1</id>
+    <summary>First item</summary>
+    <content>Full content one</content>
+    <author><name>Jane Doe</name></author>
+    <published>2006-01-02T15:04:05Z</published>
+    <updated>2006-01-03T15:04:05Z</updated>
+    <category term="tech"/>
+    <category term="news"/>
+    <link rel="enclosure" href="https://example.org/ep1.mp3" type="audio/mpeg" length="123"/>
+    <link rel="enclosure" href="https://example.org/pic.png" type="image/png" length="456"/>
+  </entry>
+</feed>

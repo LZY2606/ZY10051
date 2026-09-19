@@ -56,35 +56,17 @@ func (t *DefaultRSSTranslator) Translate(feed interface{}) (*Feed, error) {
 
 	dc := rss.DublinCoreExt
 
-	result.Title = rss.Title
-	if result.Title == "" && dc != nil {
-		result.Title = firstString(dc.Title)
-	}
-
+	result.Title = firstNonEmpty(rss.Title, dcTitle(dc))
 	result.Description = rss.Description
 	if result.Description == "" && rss.ITunesExt != nil {
 		result.Description = rss.ITunesExt.Summary
 	}
-
-	result.Language = rss.Language
-	if result.Language == "" && dc != nil {
-		result.Language = firstString(dc.Language)
-	}
-
-	result.Copyright = rss.Copyright
-	if result.Copyright == "" && dc != nil {
-		result.Copyright = firstString(dc.Rights)
-	}
-
-	result.Updated = rss.LastBuildDate
-	if result.Updated == "" && dc != nil {
-		result.Updated = firstString(dc.Date)
-	}
+	result.Language = firstNonEmpty(rss.Language, dcLanguage(dc))
+	result.Copyright = firstNonEmpty(rss.Copyright, dcRights(dc))
+	result.Updated = firstNonEmpty(rss.LastBuildDate, dcDate(dc))
 	result.UpdatedParsed = rss.LastBuildDateParsed
-	if result.UpdatedParsed == nil && dc != nil && dc.Date != nil {
-		if date, err := shared.ParseDate(firstString(dc.Date)); err == nil {
-			result.UpdatedParsed = &date
-		}
+	if result.UpdatedParsed == nil {
+		result.UpdatedParsed = parseDateOrNil(dcDate(dc))
 	}
 
 	result.Link = t.translateFeedLink(rss)
@@ -118,10 +100,7 @@ func (t *DefaultRSSTranslator) translateFeedItem(rssItem *rss.Item) *Item {
 
 	dc := rssItem.DublinCoreExt
 
-	item.Title = rssItem.Title
-	if item.Title == "" && dc != nil {
-		item.Title = firstString(dc.Title)
-	}
+	item.Title = firstNonEmpty(rssItem.Title, dcTitle(dc))
 
 	item.Description = t.translateItemDescription(rssItem)
 
@@ -187,14 +166,12 @@ func (t *DefaultRSSTranslator) translateFeedFeedLink(rss *rss.Feed) (link string
 }
 
 func (t *DefaultRSSTranslator) translateFeedLinks(rss *rss.Feed) (links []string) {
-	if len(rss.Links) > 0 {
-		links = append(links, rss.Links...)
-	}
+	links = append(links, rss.Links...)
 	atomExtensions := t.extensionsForKeys([]string{"atom", "atom10", "atom03"}, rss.Extensions)
 	for _, ex := range atomExtensions {
 		if lks, ok := ex["link"]; ok {
 			for _, l := range lks {
-				if l.Attrs["rel"] == "" || l.Attrs["rel"] == "alternate" || l.Attrs["rel"] == "self" {
+				if isWebLinkRel(l.Attrs["rel"]) {
 					links = append(links, l.Attrs["href"])
 				}
 			}
@@ -206,19 +183,8 @@ func (t *DefaultRSSTranslator) translateFeedLinks(rss *rss.Feed) (links []string
 // translateFeedAuthor picks the feed author from the first populated source:
 // managingEditor, webMaster, dc:author, dc:creator, then itunes:author.
 func (t *DefaultRSSTranslator) translateFeedAuthor(rss *rss.Feed) *Person {
-	switch {
-	case rss.ManagingEditor != "":
-		return personFromText(rss.ManagingEditor)
-	case rss.WebMaster != "":
-		return personFromText(rss.WebMaster)
-	case rss.DublinCoreExt != nil && rss.DublinCoreExt.Author != nil:
-		return personFromText(firstString(rss.DublinCoreExt.Author))
-	case rss.DublinCoreExt != nil && rss.DublinCoreExt.Creator != nil:
-		return personFromText(firstString(rss.DublinCoreExt.Creator))
-	case rss.ITunesExt != nil && rss.ITunesExt.Author != "":
-		return personFromText(rss.ITunesExt.Author)
-	}
-	return nil
+	primary := firstNonEmpty(rss.ManagingEditor, rss.WebMaster)
+	return rssPerson(primary, rss.DublinCoreExt, itunesFeedAuthor(rss.ITunesExt))
 }
 
 // translateFeedImage picks the feed image from the first populated source:
@@ -253,16 +219,10 @@ func (t *DefaultRSSTranslator) translateFeedImage(rss *rss.Feed) *Image {
 // keywords, itunes categories (and subcategories) and dc:subject values.
 func (t *DefaultRSSTranslator) translateFeedCategories(rss *rss.Feed) (categories []string) {
 	var cats []string
-	if rss.Categories != nil {
-		cats = make([]string, 0, len(rss.Categories))
-		for _, c := range rss.Categories {
-			cats = append(cats, c.Value)
-		}
-	}
+	cats = appendRSSCategories(cats, rss.Categories)
 
-	if rss.ITunesExt != nil && rss.ITunesExt.Keywords != "" {
-		keywords := strings.Split(rss.ITunesExt.Keywords, ",")
-		cats = append(cats, keywords...)
+	if rss.ITunesExt != nil {
+		cats = appendItunesKeywords(cats, rss.ITunesExt.Keywords)
 	}
 
 	if rss.ITunesExt != nil && rss.ITunesExt.Categories != nil {
@@ -274,9 +234,7 @@ func (t *DefaultRSSTranslator) translateFeedCategories(rss *rss.Feed) (categorie
 		}
 	}
 
-	if rss.DublinCoreExt != nil && rss.DublinCoreExt.Subject != nil {
-		cats = append(cats, rss.DublinCoreExt.Subject...)
-	}
+	cats = append(cats, dcSubjects(rss.DublinCoreExt)...)
 
 	if len(cats) > 0 {
 		categories = cats
@@ -296,29 +254,15 @@ func (t *DefaultRSSTranslator) translateItemDescription(rssItem *rss.Item) (desc
 	} else if rssItem.ITunesExt != nil && rssItem.ITunesExt.Summary != "" {
 		desc = rssItem.ITunesExt.Summary
 	}
-	if desc == "" {
-		desc = t.atomExtValue(rssItem.Extensions, "summary")
-	}
-	return
+	return firstNonEmpty(desc, t.atomExtValue(rssItem.Extensions, "summary"))
 }
 
 func (t *DefaultRSSTranslator) translateItemUpdated(rssItem *rss.Item) (updated string) {
-	if rssItem.DublinCoreExt != nil && rssItem.DublinCoreExt.Date != nil {
-		updated = firstString(rssItem.DublinCoreExt.Date)
-	}
-	if updated == "" {
-		updated = t.atomExtValue(rssItem.Extensions, "updated")
-	}
-	return updated
+	return firstNonEmpty(dcDate(rssItem.DublinCoreExt), t.atomExtValue(rssItem.Extensions, "updated"))
 }
 
 func (t *DefaultRSSTranslator) translateItemUpdatedParsed(rssItem *rss.Item) (updated *time.Time) {
-	if updatedText := t.translateItemUpdated(rssItem); updatedText != "" {
-		if updatedDate, err := shared.ParseDate(updatedText); err == nil {
-			updated = &updatedDate
-		}
-	}
-	return
+	return parseDateOrNil(t.translateItemUpdated(rssItem))
 }
 
 func (t *DefaultRSSTranslator) translateItemPublished(rssItem *rss.Item) (pubDate string) {
@@ -334,34 +278,16 @@ func (t *DefaultRSSTranslator) translateItemPublishedParsed(rssItem *rss.Item) (
 	if rssItem.PubDateParsed != nil {
 		return rssItem.PubDateParsed
 	}
-	pubDateText := ""
-	if rssItem.DublinCoreExt != nil && rssItem.DublinCoreExt.Date != nil {
-		pubDateText = firstString(rssItem.DublinCoreExt.Date)
-	}
-	if pubDateText == "" {
-		pubDateText = t.atomExtValue(rssItem.Extensions, "published")
-	}
-	if pubDateText != "" {
-		if pubDateParsed, err := shared.ParseDate(pubDateText); err == nil {
-			pubDate = &pubDateParsed
-		}
-	}
-	return
+	pubDateText := firstNonEmpty(dcDate(rssItem.DublinCoreExt), t.atomExtValue(rssItem.Extensions, "published"))
+	return parseDateOrNil(pubDateText)
 }
 
 // translateItemAuthor picks the item author from the first populated source:
 // author, dc:author, dc:creator, itunes:author, then an embedded atom
 // author's name and email children.
 func (t *DefaultRSSTranslator) translateItemAuthor(rssItem *rss.Item) *Person {
-	switch {
-	case rssItem.Author != "":
-		return personFromText(rssItem.Author)
-	case rssItem.DublinCoreExt != nil && rssItem.DublinCoreExt.Author != nil:
-		return personFromText(firstString(rssItem.DublinCoreExt.Author))
-	case rssItem.DublinCoreExt != nil && rssItem.DublinCoreExt.Creator != nil:
-		return personFromText(firstString(rssItem.DublinCoreExt.Creator))
-	case rssItem.ITunesExt != nil && rssItem.ITunesExt.Author != "":
-		return personFromText(rssItem.ITunesExt.Author)
+	if author := rssPerson(rssItem.Author, rssItem.DublinCoreExt, itunesItemAuthor(rssItem.ITunesExt)); author != nil {
+		return author
 	}
 	if name, email := t.atomExtChild(rssItem.Extensions, "author", "name"), t.atomExtChild(rssItem.Extensions, "author", "email"); name != "" || email != "" {
 		return &Person{Name: name, Email: email}
@@ -406,21 +332,13 @@ func (t *DefaultRSSTranslator) translateItemImage(rssItem *rss.Item) *Image {
 // dc:subject values and embedded atom:category terms.
 func (t *DefaultRSSTranslator) translateItemCategories(rssItem *rss.Item) (categories []string) {
 	var cats []string
-	if rssItem.Categories != nil {
-		cats = make([]string, 0, len(rssItem.Categories))
-		for _, c := range rssItem.Categories {
-			cats = append(cats, c.Value)
-		}
-	}
+	cats = appendRSSCategories(cats, rssItem.Categories)
 
 	if rssItem.ITunesExt != nil && rssItem.ITunesExt.Keywords != "" {
-		keywords := strings.Split(rssItem.ITunesExt.Keywords, ",")
-		cats = append(cats, keywords...)
+		cats = appendItunesKeywords(cats, rssItem.ITunesExt.Keywords)
 	}
 
-	if rssItem.DublinCoreExt != nil && rssItem.DublinCoreExt.Subject != nil {
-		cats = append(cats, rssItem.DublinCoreExt.Subject...)
-	}
+	cats = append(cats, dcSubjects(rssItem.DublinCoreExt)...)
 
 	for _, m := range t.extensionsForKeys([]string{"atom", "atom10", "atom03"}, rssItem.Extensions) {
 		for _, c := range m["category"] {
@@ -571,22 +489,14 @@ func (t *DefaultAtomTranslator) Translate(feed interface{}) (*Feed, error) {
 	if l := firstLinkWithRel("self", atomFeed.Links); l != nil {
 		result.FeedLink = l.Href
 	}
-	for _, l := range atomFeed.Links {
-		if l.Rel == "" || l.Rel == "alternate" || l.Rel == "self" {
-			result.Links = append(result.Links, l.Href)
-		}
-	}
+	result.Links = atomWebHrefs(atomFeed.Links)
 
 	if len(atomFeed.Authors) > 0 {
 		result.Authors = atomPersons(atomFeed.Authors)
 		result.Author = result.Authors[0]
 	}
 
-	if atomFeed.Logo != "" {
-		result.Image = &Image{URL: atomFeed.Logo}
-	} else if atomFeed.Icon != "" {
-		result.Image = &Image{URL: atomFeed.Icon}
-	}
+	result.Image = firstImageURL(atomFeed.Logo, atomFeed.Icon)
 
 	if atomFeed.Generator != nil {
 		generator := atomFeed.Generator.Value
@@ -626,11 +536,7 @@ func (t *DefaultAtomTranslator) translateFeedItem(entry *atom.Entry) *Item {
 	if l := firstLinkWithRel("alternate", entry.Links); l != nil {
 		item.Link = l.Href
 	}
-	for _, l := range entry.Links {
-		if l.Rel == "" || l.Rel == "alternate" || l.Rel == "self" {
-			item.Links = append(item.Links, l.Href)
-		}
-	}
+	item.Links = atomWebHrefs(entry.Links)
 
 	// Published falls back to the update time when absent.
 	item.Published = entry.Published
@@ -736,9 +642,7 @@ func (t *DefaultJSONTranslator) Translate(feed interface{}) (*Feed, error) {
 
 	// The icon is used over json.Feed.Image: the spec describes it as the
 	// square image suitable for a timeline, which is what Feed.Image holds.
-	if jsonFeed.Icon != "" {
-		result.Image = &Image{URL: jsonFeed.Icon}
-	}
+	result.Image = firstImageURL(jsonFeed.Icon)
 
 	if jsonFeed.Author != nil {
 		result.Author = jsonPerson(jsonFeed.Author)
@@ -752,13 +656,9 @@ func (t *DefaultJSONTranslator) Translate(feed interface{}) (*Feed, error) {
 	// The feed-level times mirror the first (most recent) item's.
 	if len(jsonFeed.Items) > 0 {
 		result.Updated = jsonFeed.Items[0].DateModified
-		if date, err := shared.ParseDate(result.Updated); err == nil {
-			result.UpdatedParsed = &date
-		}
+		result.UpdatedParsed = parseDateOrNil(result.Updated)
 		result.Published = jsonFeed.Items[0].DatePublished
-		if date, err := shared.ParseDate(result.Published); err == nil {
-			result.PublishedParsed = &date
-		}
+		result.PublishedParsed = parseDateOrNil(result.Published)
 	}
 
 	result.Items = make([]*Item, 0, len(jsonFeed.Items))
@@ -792,27 +692,12 @@ func (t *DefaultJSONTranslator) translateFeedItem(jsonItem *json.Item) *Item {
 		item.Links = append(item.Links, jsonItem.ExternalURL)
 	}
 
-	item.Content = jsonItem.ContentHTML
-	if item.Content == "" {
-		item.Content = jsonItem.ContentText
-	}
+	item.Content = firstNonEmpty(jsonItem.ContentHTML, jsonItem.ContentText)
 
-	if jsonItem.Image != "" {
-		item.Image = &Image{URL: jsonItem.Image}
-	} else if jsonItem.BannerImage != "" {
-		item.Image = &Image{URL: jsonItem.BannerImage}
-	}
+	item.Image = firstImageURL(jsonItem.Image, jsonItem.BannerImage)
 
-	if jsonItem.DatePublished != "" {
-		if date, err := shared.ParseDate(jsonItem.DatePublished); err == nil {
-			item.PublishedParsed = &date
-		}
-	}
-	if jsonItem.DateModified != "" {
-		if date, err := shared.ParseDate(jsonItem.DateModified); err == nil {
-			item.UpdatedParsed = &date
-		}
-	}
+	item.PublishedParsed = parseDateOrNil(jsonItem.DatePublished)
+	item.UpdatedParsed = parseDateOrNil(jsonItem.DateModified)
 
 	if jsonItem.Author != nil {
 		item.Author = jsonPerson(jsonItem.Author)

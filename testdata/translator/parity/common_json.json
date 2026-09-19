@@ -1,0 +1,27 @@
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "Parity Feed",
+  "home_page_url": "https://example.org/",
+  "feed_url": "https://example.org/feed",
+  "description": "A cross-format parity feed",
+  "language": "en",
+  "icon": "https://example.org/logo.png",
+  "author": {"name": "Jane Doe"},
+  "items": [
+    {
+      "id": "urn:parity:1",
+      "url": "https://example.org/1",
+      "title": "Item One",
+      "summary": "First item",
+      "content_html": "Full content one",
+      "date_published": "2006-01-02T15:04:05Z",
+      "date_modified": "2006-01-03T15:04:05Z",
+      "author": {"name": "Jane Doe"},
+      "tags": ["tech", "news"],
+      "attachments": [
+        {"url": "https://example.org/ep1.mp3", "mime_type": "audio/mpeg", "size_in_bytes": 123},
+        {"url": "https://example.org/pic.png", "mime_type": "image/png", "size_in_bytes": 456}
+      ]
+    }
+  ]
+}

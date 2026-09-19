@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+     xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:content="http://purl.org/rss/1.0/modules/content/"
+     xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Parity Feed</title>
+    <link>https://example.org/</link>
+    <atom:link rel="self" href="https://example.org/feed" type="application/rss+xml"/>
+    <description>A cross-format parity feed</description>
+    <language>en</language>
+    <lastBuildDate>Tue, 03 Jan 2006 15:04:05 GMT</lastBuildDate>
+    <managingEditor>Jane Doe</managingEditor>
+    <image>
+      <url>https://example.org/logo.png</url>
+      <title>Parity Logo</title>
+      <link>https://example.org/</link>
+    </image>
+    <item>
+      <title>Item One</title>
+      <link>https://example.org/1</link>
+      <description>First item</description>
+      <content:encoded>Full content one</content:encoded>
+      <author>Jane Doe</author>
+      <guid>urn:parity:1</guid>
+      <pubDate>Mon, 02 Jan 2006 15:04:05 GMT</pubDate>
+      <dc:date>2006-01-03T15:04:05Z</dc:date>
+      <category>tech</category>
+      <category>news</category>
+      <enclosure url="https://example.org/ep1.mp3" type="audio/mpeg" length="123"/>
+      <enclosure url="https://example.org/pic.png" type="image/png" length="456"/>
+    </item>
+  </channel>
+</rss>
